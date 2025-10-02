@@ -13,12 +13,12 @@ export default function App() {
   const [demoStep, setDemoStep] = useState(0);
   const chatEndRef = useRef(null);
 
-  // State for Gemini API feature 1: Email Generation
+  // State for mocked feature 1: Email Generation
   const [isGeneratingEmail, setIsGeneratingEmail] = useState(false);
   const [generatedEmail, setGeneratedEmail] = useState('');
   const [copyButtonText, setCopyButtonText] = useState('Copy to Clipboard');
 
-  // State for Gemini API feature 2: Elaboration
+  // State for mocked feature 2: Elaboration
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [elaborationContent, setElaborationContent] = useState('');
   const [isElaborating, setIsElaborating] = useState(false);
@@ -41,82 +41,78 @@ export default function App() {
     }
   ];
 
-  // --- Gemini API Call 1: Email Generation ---
-  const handleGenerateEmail = async () => {
+  // --- Mocked Feature 1: Email Generation ---
+  const handleGenerateEmail = () => {
     setIsGeneratingEmail(true);
     setGeneratedEmail('');
     setCopyButtonText('Copy to Clipboard');
 
-  const apiKey = "";
-  const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+    // MOCKED RESPONSE - No API call is made
+    const staticEmailResponse = `Subject: Urgent Action Required: Invoice Discrepancies Detected
 
-  const systemPrompt = "You are an expert financial operations assistant named FlowSync AI. Your tone is professional, clear, and action-oriented. You are drafting an email to internal teams to resolve financial discrepancies.";
-  const userQuery = `Draft an email to the Finance and Sales Operations teams about resolving 3 urgent invoice discrepancies. The discrepancies are:\n    1. INV-1023 for $15,000\n    2. INV-1088 for $9,200\n    3. INV-1101 for $6,500\n    The email should clearly state the issue, list the discrepancies, and specify that an automated workflow has been initiated to sync the data. It should ask the teams to review the attached detailed report and action their assigned tasks promptly. The subject should be urgent and clear.`;
+Hello Teams,
 
-    const payload = {
-      contents: [{ parts: [{ text: userQuery }] }],
-      systemInstruction: { parts: [{ text: systemPrompt }] },
-    };
+This is an automated alert from FlowSync AI.
 
-    try {
-      const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-      const result = await response.json();
-      const candidate = result.candidates?.[0];
-      if (candidate && candidate.content?.parts?.[0]?.text) {
-        setGeneratedEmail(candidate.content.parts[0].text);
-      } else {
-        setGeneratedEmail('Error: Could not generate the email. The API response was invalid.');
-      }
-    } catch (error) {
-      console.error("Gemini API call failed:", error);
-      setGeneratedEmail('Error: Failed to connect to the email generation service. Please check the console for details.');
-    } finally {
-      setIsGeneratingEmail(false);
-    }
+We have identified 3 high-priority invoice discrepancies between our ERP and CRM systems that require your immediate attention.
+
+Details:
+1. INV-1023: $15,000
+2. INV-1088: $9,200
+3. INV-1101: $6,500
+
+An automated workflow has been initiated to perform the necessary data synchronizations. A detailed report has been sent to your inboxes.
+
+Please review the report and action the resolution tasks assigned to your respective teams promptly to prevent any impact on our financial reporting.
+
+Thank you,
+FlowSync AI`;
+
+    // Simulate network delay
+    setTimeout(() => {
+        setGeneratedEmail(staticEmailResponse);
+        setIsGeneratingEmail(false);
+    }, 1500);
   };
 
-  // --- Gemini API Call 2: Elaborate on Step ---
-  const handleElaborateStep = async (stepTitle, stepDescription) => {
+  // --- Mocked Feature 2: Elaborate on Step ---
+  const handleElaborateStep = (stepTitle) => {
+    setModalTitle(`Elaborating on: ${stepTitle}`);
+    setIsModalOpen(true);
+    setIsElaborating(true);
+    setElaborationContent('');
 
-  setModalTitle(`Elaborating on: ${stepTitle}`);
-  setIsModalOpen(true);
-  setIsElaborating(true);
-  setElaborationContent('');
-
-  const apiKey = "";
-  const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-
-  const systemPrompt = "You are a helpful AI assistant explaining a step in an automated financial workflow. Your explanation should be clear, concise, and targeted to an operations professional. Use professional language.";
-  const userQuery = `In the context of resolving financial discrepancies between an ERP and a CRM, please elaborate on the following step: \"${stepTitle} - ${stepDescription}\". Explain what this step entails and why it is important for the overall process.`;
-
-    const payload = {
-      contents: [{ parts: [{ text: userQuery }] }],
-      systemInstruction: { parts: [{ text: systemPrompt }] },
-    };
-
-     try {
-      const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-      const result = await response.json();
-      const candidate = result.candidates?.[0];
-      if (candidate && candidate.content?.parts?.[0]?.text) {
-        setElaborationContent(candidate.content.parts[0].text);
-      } else {
-        setElaborationContent('Error: Could not generate the explanation. The API response was invalid.');
-      }
-    } catch (error) {
-      console.error("Gemini API call failed:", error);
-      setElaborationContent('Error: Failed to connect to the elaboration service. Please check the console for details.');
-    } finally {
-      setIsElaborating(false);
+    // MOCKED RESPONSE - No API call is made
+    let staticElaboration = '';
+    switch (stepTitle) {
+        case 'Plan':
+            staticElaboration = "This initial 'Plan' phase is crucial for establishing a unified view of the data. The system programmatically connects to the ERP and CRM via secure APIs to fetch relevant records like invoices, purchase orders, and customer data for the specified period. It then standardizes this data, creating a common format to ensure accurate, like-for-like comparisons in the next step. This prevents errors that arise from manual data entry and different system schemas.";
+            break;
+        case 'Action':
+            staticElaboration = "In the 'Action' phase, the system executes its core logic. It cross-references the correlated data from the previous step, systematically checking for mismatches in key fields such as amounts, dates, and reference numbers. Any record that fails this validation is flagged as a discrepancy. This automated identification is significantly faster and more accurate than manual spot-checking, allowing teams to focus on the exceptions rather than the entire dataset.";
+            break;
+        case 'Result':
+            staticElaboration = "The 'Result' phase is about delivering actionable insights. The system compiles all identified discrepancies into a structured, audit-ready report, complete with details for each issue. Simultaneously, it triggers alerts to the designated finance and operations teams, often creating tasks directly in their project management tools. This ensures that the findings are not just reported but are immediately routed to the correct personnel for resolution, closing the loop from detection to action.";
+            break;
+        default:
+            staticElaboration = "This step is a key part of the automated workflow to ensure data integrity across systems.";
     }
+
+    // Simulate network delay
+    setTimeout(() => {
+        setElaborationContent(staticElaboration);
+        setIsElaborating(false);
+    }, 1200);
   }
 
 
   const copyToClipboard = () => {
+    // A robust copy-to-clipboard function with fallback
     navigator.clipboard.writeText(generatedEmail).then(() => {
         setCopyButtonText('Copied!');
         setTimeout(() => setCopyButtonText('Copy to Clipboard'), 2000);
     }, () => {
+        // Fallback for older browsers or insecure contexts
         const textArea = document.createElement("textarea");
         textArea.value = generatedEmail;
         document.body.appendChild(textArea);
@@ -134,9 +130,12 @@ export default function App() {
   };
 
   const handleSendMessage = (userMessage) => {
-    if (demoStep >= scriptedDemo.length) return;
+    if (demoStep >= scriptedDemo.length) return; // Prevent extra clicks after demo is over
+
     const { bot } = scriptedDemo[demoStep];
+    // Add user message
     setMessages((prev) => [...prev, { sender: 'user', text: userMessage }]);
+    // Add bot reply after a short delay for realism
     setTimeout(() => {
       setMessages((prev) => [...prev, { sender: 'bot', text: bot }]);
     }, 1000);
@@ -145,6 +144,7 @@ export default function App() {
 
   const togglePlanVisibility = () => setIsPlanVisible(!isPlanVisible);
 
+  // Auto-scroll to the latest message
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -167,7 +167,7 @@ export default function App() {
         .header { text-align: center; margin-bottom: 2rem; border-bottom: 1px solid #30363d; padding-bottom: 1.5rem; }
         .header h1 { margin: 0; font-size: 2.25rem; font-weight: 700; color: #FFFFFF; text-shadow: 0 0 10px rgba(0, 245, 212, 0.7); }
         .header p { margin: 0.5rem 0 0; color: #A9B4CC; }
-        .problem-user { background: linear-gradient(145deg, rgba(31, 41, 55, 0.8), rgba(31, 41, 55, 0.4)); padding: 1.25rem; border-radius: 12px; margin-bottom: 2rem; text-align: center; border: 1px solid goldenrod; font-size: 0.9rem; box-shadow: 0 0 10px rgba(218, 165, 32, 0.3); color: goldenrod; }
+        .problem-user { background: linear-gradient(145deg, rgba(31, 41, 55, 0.8), rgba(31, 41, 55, 0.4)); padding: 1.25rem; border-radius: 12px; margin-bottom: 2rem; text-align: center; border: 1px solid #30363d; font-size: 0.9rem; }
         .problem-user strong { color: #EAEFFB; }
         .main-content { display: flex; flex-wrap: wrap; gap: 2rem; }
         .chat-section { flex: 2; min-width: 300px; }
@@ -281,7 +281,7 @@ export default function App() {
                     <div className="agent-step" key={step.title}>
                         <div>
                             <strong>{step.title} →</strong>
-                            <button className="elaborate-btn" onClick={() => handleElaborateStep(step.title, step.description)}>✨ Elaborate</button>
+                            <button className="elaborate-btn" onClick={() => handleElaborateStep(step.title)}>✨ Elaborate</button>
                         </div>
                         {step.description}
                     </div>
@@ -330,3 +330,4 @@ export default function App() {
     </>
   );
 }
+
